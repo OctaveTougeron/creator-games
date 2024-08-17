@@ -79,7 +79,11 @@
                 if (xhr.status === 200) {
                     feedback.innerHTML = "<p>Les images ont été chargées avec succès ! Le traitement est en cours...</p>";
                     // Continuer à afficher la progression pour le traitement côté serveur
-                    trackProcessingProgress();
+                    const blob = new Blob([xhr.response], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    downloadLink.href = url;
+                    downloadSection.style.display = 'block';
+                    trackProcessingProgress();  // Simuler la progression du traitement serveur
                 } else {
                     feedback.innerHTML = "<p>Erreur lors du téléversement. Veuillez réessayer.</p>";
                     progressContainer.style.display = 'none';  // Masquer la barre de progression après le chargement

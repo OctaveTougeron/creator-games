@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Générateur de Dobble</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Barre de progression style simple */
+        #progressContainer {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        #progressBar {
+            width: 0%;
+            height: 25px;
+            background-color: #4caf50;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -21,8 +36,8 @@
             </form>
 
             <!-- Barre de progression -->
-            <div id="progressContainer" style="display: none; margin-top: 20px;">
-                <div id="progressBar" style="width: 0%; height: 25px; background-color: #4caf50;"></div>
+            <div id="progressContainer" style="display: none;">
+                <div id="progressBar"></div>
             </div>
 
             <div id="feedback"></div>
@@ -52,12 +67,13 @@
             progressContainer.style.display = 'block';
 
             // Met à jour la barre de progression
-            xhr.upload.onprogress = function (event) {
+            xhr.upload.addEventListener('progress', function (event) {
                 if (event.lengthComputable) {
                     const percentComplete = (event.loaded / event.total) * 100;
                     progressBar.style.width = percentComplete + '%';
+                    progressBar.textContent = Math.round(percentComplete) + '%';
                 }
-            };
+            });
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
@@ -70,6 +86,11 @@
                     feedback.innerHTML = "<p>Erreur lors du téléversement. Veuillez réessayer.</p>";
                 }
                 progressContainer.style.display = 'none';  // Masquer la barre de progression après le chargement
+            };
+
+            xhr.onerror = function () {
+                feedback.innerHTML = "<p>Erreur réseau. Veuillez réessayer.</p>";
+                progressContainer.style.display = 'none';
             };
 
             xhr.responseType = 'blob';  // On attend un fichier PDF en réponse

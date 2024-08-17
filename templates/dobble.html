@@ -66,10 +66,10 @@
             // Affiche la barre de progression
             progressContainer.style.display = 'block';
 
-            // Met à jour la barre de progression pour le téléversement
+            // Met à jour la barre de progression
             xhr.upload.addEventListener('progress', function (event) {
                 if (event.lengthComputable) {
-                    const percentComplete = (event.loaded / event.total) * 50; // On limite à 50% pour le téléversement
+                    const percentComplete = (event.loaded / event.total) * 100;
                     progressBar.style.width = percentComplete + '%';
                     progressBar.textContent = Math.round(percentComplete) + '%';
                 }
@@ -77,17 +77,15 @@
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    feedback.innerHTML = "<p>Les images ont été chargées avec succès ! Le traitement est en cours...</p>";
-                    // Continuer à afficher la progression pour le traitement côté serveur
+                    feedback.innerHTML = "<p>Les images ont été chargées avec succès !</p>";
                     const blob = new Blob([xhr.response], { type: 'application/pdf' });
                     const url = URL.createObjectURL(blob);
                     downloadLink.href = url;
                     downloadSection.style.display = 'block';
-                    trackProcessingProgress();  // Simuler la progression du traitement serveur
                 } else {
                     feedback.innerHTML = "<p>Erreur lors du téléversement. Veuillez réessayer.</p>";
-                    progressContainer.style.display = 'none';  // Masquer la barre de progression après le chargement
                 }
+                progressContainer.style.display = 'none';  // Masquer la barre de progression après le chargement
             };
 
             xhr.onerror = function () {
@@ -98,29 +96,6 @@
             xhr.responseType = 'blob';  // On attend un fichier PDF en réponse
             xhr.send(formData);
         });
-
-        function trackProcessingProgress() {
-            let progress = 50; // On commence à 50% après le téléversement
-
-            const intervalId = setInterval(() => {
-                // Simuler un appel AJAX pour obtenir la progression côté serveur
-                // Ici, nous utiliserons une valeur fictive pour la démonstration
-                // Vous devez implémenter un endpoint backend pour renvoyer l'état du traitement.
-
-                progress += 10;  // Simuler une progression du traitement
-
-                if (progress >= 100) {
-                    progressBar.style.width = '100%';
-                    progressBar.textContent = '100%';
-                    clearInterval(intervalId);
-                    feedback.innerHTML = "<p>Le traitement est terminé !</p>";
-                    downloadSection.style.display = 'block';  // Afficher le lien de téléchargement du PDF
-                } else {
-                    progressBar.style.width = progress + '%';
-                    progressBar.textContent = Math.round(progress) + '%';
-                }
-            }, 1000);  // Interroger toutes les secondes (simulé)
-        }
     </script>
 </body>
 </html>

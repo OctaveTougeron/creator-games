@@ -20,6 +20,11 @@
                 <button type="submit">Créer le jeu Dobble</button>
             </form>
 
+            <!-- Barre de progression -->
+            <div id="progressContainer" style="display: none; margin-top: 20px;">
+                <div id="progressBar" style="width: 0%; height: 25px; background-color: #4caf50;"></div>
+            </div>
+
             <div id="feedback"></div>
             <div id="downloadSection" style="display: none;">
                 <a id="downloadLink" href="#" class="btn">Téléchargez votre Dobble</a>
@@ -32,6 +37,8 @@
         const feedback = document.getElementById('feedback');
         const downloadSection = document.getElementById('downloadSection');
         const downloadLink = document.getElementById('downloadLink');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
 
         form.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -40,6 +47,17 @@
             const formData = new FormData(form);
 
             xhr.open('POST', form.action, true);
+
+            // Affiche la barre de progression
+            progressContainer.style.display = 'block';
+
+            // Met à jour la barre de progression
+            xhr.upload.onprogress = function (event) {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    progressBar.style.width = percentComplete + '%';
+                }
+            };
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
@@ -51,6 +69,7 @@
                 } else {
                     feedback.innerHTML = "<p>Erreur lors du téléversement. Veuillez réessayer.</p>";
                 }
+                progressContainer.style.display = 'none';  // Masquer la barre de progression après le chargement
             };
 
             xhr.responseType = 'blob';  // On attend un fichier PDF en réponse

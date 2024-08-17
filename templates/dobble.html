@@ -19,6 +19,13 @@
             background-color: #4caf50;
             border-radius: 10px;
         }
+        /* Style pour l'indicateur de chargement */
+        #loadingIndicator {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -40,6 +47,9 @@
                 <div id="progressBar"></div>
             </div>
 
+            <!-- Indicateur de chargement -->
+            <div id="loadingIndicator">Veuillez patienter, traitement en cours...</div>
+
             <div id="feedback"></div>
             <div id="downloadSection" style="display: none;">
                 <a id="downloadLink" href="#" class="btn">Téléchargez votre Dobble</a>
@@ -54,6 +64,7 @@
         const downloadLink = document.getElementById('downloadLink');
         const progressContainer = document.getElementById('progressContainer');
         const progressBar = document.getElementById('progressBar');
+        const loadingIndicator = document.getElementById('loadingIndicator');
 
         form.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -85,12 +96,26 @@
                 } else {
                     feedback.innerHTML = "<p>Erreur lors du téléversement. Veuillez réessayer.</p>";
                 }
-                progressContainer.style.display = 'none';  // Masquer la barre de progression après le chargement
+                // Masquer la barre de progression après le téléversement
+                progressContainer.style.display = 'none';
+                // Masquer l'indicateur de chargement
+                loadingIndicator.style.display = 'none';
             };
 
             xhr.onerror = function () {
                 feedback.innerHTML = "<p>Erreur réseau. Veuillez réessayer.</p>";
                 progressContainer.style.display = 'none';
+                loadingIndicator.style.display = 'none';
+            };
+
+            xhr.onloadstart = function () {
+                loadingIndicator.style.display = 'none';  // Masquer l'indicateur pendant le téléversement
+            };
+
+            xhr.upload.onloadend = function () {
+                // Masquer la barre de progression et afficher l'indicateur de traitement
+                progressContainer.style.display = 'none';
+                loadingIndicator.style.display = 'block';  // Afficher l'indicateur pendant le traitement serveur
             };
 
             xhr.responseType = 'blob';  // On attend un fichier PDF en réponse

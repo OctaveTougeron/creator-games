@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Dobble</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <h1>Générateur de Dobble</h1>
+        </header>
+
+        <main>
+            <h2>Téléversez vos images pour créer votre jeu Dobble personnalisé</h2>
+            <form id="uploadForm" method="POST" action="/generate_dobble" enctype="multipart/form-data">
+                <input type="file" name="images" multiple required>
+                <button type="submit">Créer le jeu Dobble</button>
+            </form>
+
+            <div id="feedback"></div>
+            <div id="downloadSection" style="display: none;">
+                <a id="downloadLink" href="#" class="btn">Téléchargez votre Dobble</a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const feedback = document.getElementById('feedback');
+        const downloadSection = document.getElementById('downloadSection');
+        const downloadLink = document.getElementById('downloadLink');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const xhr = new XMLHttpRequest();
+            const formData = new FormData(form);
+
+            xhr.open('POST', form.action, true);
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    feedback.innerHTML = "<p>Les images ont été chargées avec succès !</p>";
+                    const blob = new Blob([xhr.response], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    downloadLink.href = url;
+                    downloadSection.style.display = 'block';
+                } else {
+                    feedback.innerHTML = "<p>Erreur lors du téléversement. Veuillez réessayer.</p>";
+                }
+            };
+
+            xhr.responseType = 'blob';  // On attend un fichier PDF en réponse
+            xhr.send(formData);
+        });
+    </script>
+</body>
+</html>

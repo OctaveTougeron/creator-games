@@ -164,35 +164,46 @@ def create_memory_pdf(pairs):
     c_width, c_height = 2480, 3508  # Taille d'une page A4 en pixels à 300 DPI
     card_size = 400  # Taille des cartes mémoire (400x400 pixels)
     pages = []
-    current_page = Image.new('RGB', (c_width, c_height), (255, 255, 255))
+    current_page = Image.new('RGB', (c_width, c_height), (255, 255, 255))  # Fond blanc
 
-    # Positions pour 4 images par ligne, 5 lignes par page (20 cartes par page)
+    # Positions pour 4 paires (8 images) par ligne, 5 lignes par page (20 paires par page)
     positions = [
-        (80, 80), (640, 80), (1200, 80), (1760, 80),  # Ligne 1
-        (80, 640), (640, 640), (1200, 640), (1760, 640),  # Ligne 2
+        (80, 80), (640, 80), (1200, 80), (1760, 80),   # Ligne 1 (Première image de chaque paire)
+        (80, 640), (640, 640), (1200, 640), (1760, 640), # Ligne 2 (Deuxième image de chaque paire)
         (80, 1200), (640, 1200), (1200, 1200), (1760, 1200),  # Ligne 3
         (80, 1760), (640, 1760), (1200, 1760), (1760, 1760),  # Ligne 4
-        (80, 2320), (640, 2320), (1200, 2320), (1760, 2320)  # Ligne 5
+        (80, 2320), (640, 2320), (1200, 2320), (1760, 2320)   # Ligne 5
     ]
     
-    for idx, pair in enumerate(pairs):
-        pos = positions[idx % 20]
-        resized_pair = pair.resize((card_size, card_size))
-        current_page.paste(resized_pair, pos)
+    for idx in range(0, len(pairs), 2):
+        # Disposer chaque paire côte à côte
+        pos1 = positions[(idx // 2) % 20]  # Position de la première image de la paire
+        pos2 = positions[((idx // 2) % 20) + 1]  # Position de la deuxième image de la paire
 
-        if (idx + 1) % 20 == 0:
+        resized_pair1 = pairs[idx].resize((card_size, card_size))
+        resized_pair2 = pairs[idx + 1].resize((card_size, card_size))
+
+        # Coller les images sur la page courante
+        current_page.paste(resized_pair1, pos1)
+        current_page.paste(resized_pair2, pos2)
+
+        # Si 20 paires (40 cartes) sont atteintes, ajouter la page et en créer une nouvelle
+        if (idx + 2) % 40 == 0:
             pages.append(current_page)
-            current_page = Image.new('RGB', (c_width, c_height), (255, 255, 255))
+            current_page = Image.new('RGB', (c_width, c_height), (255, 255, 255))  # Nouvelle page avec fond blanc
 
-    if idx % 20 != 19:
+    # Ajouter la dernière page si elle n'est pas complète
+    if (idx + 2) % 40 != 0:
         pages.append(current_page)
 
+    # Sauvegarder toutes les pages dans un PDF
     first_page = pages[0]
     other_pages = pages[1:]
     first_page.save(pdf_buffer, format='PDF', save_all=True, append_images=other_pages, resolution=300)
     
     pdf_buffer.seek(0)
     return pdf_buffer
+
 
 if __name__ == '__main__':
     app.run(debug=True)

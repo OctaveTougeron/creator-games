@@ -6,96 +6,104 @@
     <title>Générateur de Dobble</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        /* Barre de progression style simple */
-        #progressContainer {
-            width: 100%;
-            background-color: #f3f3f3;
-            border-radius: 10px;
+        /* Styles de base */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #4caf50;
+            color: white;
+        }
+        h1 {
+            font-size: 36px;
+            margin: 0;
+        }
+        main {
             margin-top: 20px;
         }
-        #progressBar {
-            width: 0%;
-            height: 25px;
+        section {
+            margin-bottom: 40px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #4caf50;
+        }
+        .section-content {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #666;
+        }
+        footer {
+            text-align: center;
+            padding: 20px 0;
             background-color: #4caf50;
-            border-radius: 10px;
+            color: white;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-            <h1>Générateur de Dobble</h1>
+            <h1>Créer votre jeu Dobble personnalisé</h1>
         </header>
 
         <main>
-            <h2>Téléversez vos images pour créer votre jeu Dobble personnalisé</h2>
-            <form id="uploadForm" method="POST" action="/generate_dobble" enctype="multipart/form-data">
-                <input type="file" name="images" multiple required>
-                <button type="submit">Créer le jeu Dobble</button>
-            </form>
+            <!-- Section du générateur de Dobble -->
+            <section>
+                <h2 class="section-title">Générateur de Dobble</h2>
+                <form id="uploadForm" method="POST" action="/generate_dobble" enctype="multipart/form-data">
+                    <input type="file" name="images" multiple required>
+                    <p>Veuillez téléverser exactement 57 images pour générer votre jeu Dobble personnalisé.</p>
+                    <button type="submit">Créer le jeu Dobble</button>
+                </form>
+            </section>
 
-            <!-- Barre de progression -->
-            <div id="progressContainer" style="display: none;">
-                <div id="progressBar"></div>
-            </div>
+            <!-- Section Explications des règles du jeu Dobble -->
+            <section>
+                <h2 class="section-title">Comment jouer à Dobble</h2>
+                <div class="section-content">
+                    <p>Dobble est un jeu de rapidité et d'observation. Le jeu contient 55 cartes rondes, chacune avec 8 symboles différents. La particularité est que chaque carte a toujours un symbole en commun avec une autre carte.</p>
+                    
+                    <h3>But du jeu :</h3>
+                    <p>Être le plus rapide à repérer le symbole identique entre deux cartes et l'annoncer à voix haute.</p>
 
-            <div id="feedback"></div>
-            <div id="downloadSection" style="display: none;">
-                <a id="downloadLink" href="#" class="btn">Téléchargez votre Dobble</a>
-            </div>
+                    <h3>Préparation :</h3>
+                    <p>Mélangez les cartes et distribuez-en une à chaque joueur. Placez la pile restante au centre de la table, face visible.</p>
+
+                    <h3>Règles :</h3>
+                    <ul>
+                        <li>Chacun à son tour, les joueurs doivent comparer leur carte avec celle de la pile centrale.</li>
+                        <li>Le premier joueur à repérer le symbole identique entre sa carte et la carte centrale gagne la manche.</li>
+                        <li>Le joueur qui a gagné la manche prend la carte centrale, et une nouvelle carte de la pile est révélée.</li>
+                        <li>Le jeu continue ainsi jusqu'à épuisement de la pile.</li>
+                    </ul>
+
+                    <h3>Variantes :</h3>
+                    <p>Il existe plusieurs variantes de Dobble, notamment le jeu en mode "feuilles de trèfle" ou encore le mode "tournoi", où les joueurs s'affrontent directement pour remporter le plus de cartes possible.</p>
+                </div>
+            </section>
         </main>
+
+        <footer>
+            <p>&copy; 2024 Creator Games. Tous droits réservés.</p>
+        </footer>
     </div>
-
-    <script>
-        const form = document.getElementById('uploadForm');
-        const feedback = document.getElementById('feedback');
-        const downloadSection = document.getElementById('downloadSection');
-        const downloadLink = document.getElementById('downloadLink');
-        const progressContainer = document.getElementById('progressContainer');
-        const progressBar = document.getElementById('progressBar');
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const xhr = new XMLHttpRequest();
-            const formData = new FormData(form);
-
-            xhr.open('POST', form.action, true);
-
-            // Affiche la barre de progression
-            progressContainer.style.display = 'block';
-
-            // Met à jour la barre de progression
-            xhr.upload.addEventListener('progress', function (event) {
-                if (event.lengthComputable) {
-                    const percentComplete = (event.loaded / event.total) * 100;
-                    progressBar.style.width = percentComplete + '%';
-                    progressBar.textContent = Math.round(percentComplete) + '%';
-                }
-            });
-
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    feedback.innerHTML = "<p>Les images ont été chargées avec succès !</p>";
-                    const blob = new Blob([xhr.response], { type: 'application/pdf' });
-                    const url = URL.createObjectURL(blob);
-                    downloadLink.href = url;
-                    downloadSection.style.display = 'block';
-                } else {
-                    feedback.innerHTML = "<p>Erreur lors du téléversement. Veuillez réessayer.</p>";
-                }
-                progressContainer.style.display = 'none';  // Masquer la barre de progression après le chargement
-            };
-
-            xhr.onerror = function () {
-                feedback.innerHTML = "<p>Erreur réseau. Veuillez réessayer.</p>";
-                progressContainer.style.display = 'none';
-            };
-
-            xhr.responseType = 'blob';  // On attend un fichier PDF en réponse
-            xhr.send(formData);
-        });
-    </script>
 </body>
 </html>

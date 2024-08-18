@@ -164,35 +164,42 @@ def create_memory_pdf(pairs):
     c_width, c_height = 2480, 3508  # Taille d'une page A4 en pixels à 300 DPI
     card_size = 400  # Taille des cartes mémoire (400x400 pixels)
     pages = []
-    current_page = Image.new('RGB', (c_width, c_height), (255, 255, 255))
+    current_page = Image.new('RGB', (c_width, c_height), (255, 255, 255))  # Créer une page avec un fond blanc
 
-    # Positions pour 4 images par ligne, 5 lignes par page (20 cartes par page)
+    # Positions pour 4 paires (8 images) par ligne, 5 lignes par page (20 paires par page)
     positions = [
-        (80, 80), (640, 80), (1200, 80), (1760, 80),  # Ligne 1
-        (80, 640), (640, 640), (1200, 640), (1760, 640),  # Ligne 2
+        (80, 80), (640, 80), (1200, 80), (1760, 80),   # Ligne 1
+        (80, 640), (640, 640), (1200, 640), (1760, 640), # Ligne 2
         (80, 1200), (640, 1200), (1200, 1200), (1760, 1200),  # Ligne 3
         (80, 1760), (640, 1760), (1200, 1760), (1760, 1760),  # Ligne 4
-        (80, 2320), (640, 2320), (1200, 2320), (1760, 2320)  # Ligne 5
+        (80, 2320), (640, 2320), (1200, 2320), (1760, 2320)   # Ligne 5
     ]
-    
+
     for idx, pair in enumerate(pairs):
         pos = positions[idx % 20]
-        resized_pair = pair.resize((card_size, card_size))
+
+        # S'assurer que chaque image est convertie en mode RGB avec un fond blanc
+        image_with_white_bg = Image.new("RGB", pair.size, (255, 255, 255))
+        image_with_white_bg.paste(pair, mask=pair.split()[3] if pair.mode == 'RGBA' else None)
+
+        resized_pair = image_with_white_bg.resize((card_size, card_size))
+
         current_page.paste(resized_pair, pos)
 
-        if (idx + 1) % 20 == 0:
+        if (idx + 1) % 20 == 0:  # Après avoir placé 20 images (10 paires), ajouter la page et en créer une nouvelle
             pages.append(current_page)
-            current_page = Image.new('RGB', (c_width, c_height), (255, 255, 255))
+            current_page = Image.new('RGB', (c_width, c_height), (255, 255, 255))  # Nouvelle page avec fond blanc
 
-    if idx % 20 != 19:
+    # Si toutes les images ne remplissent pas une page complète, ajouter la dernière page
+    if (idx + 1) % 20 != 0:
         pages.append(current_page)
 
+    # Sauvegarder toutes les pages dans un PDF
     first_page = pages[0]
     other_pages = pages[1:]
     first_page.save(pdf_buffer, format='PDF', save_all=True, append_images=other_pages, resolution=300)
     
     pdf_buffer.seek(0)
     return pdf_buffer
-
 if __name__ == '__main__':
     app.run(debug=True)

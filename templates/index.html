@@ -3,44 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil - Créateur de Jeux</title>
+    <title>Accueil - Creator Games</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
+        /* Styles de base */
         body {
             font-family: Arial, sans-serif;
             background-color: #f9f9f9;
+            color: #333;
             margin: 0;
             padding: 0;
-            color: #333;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-
         header {
             text-align: center;
             padding: 20px 0;
             background-color: #4caf50;
             color: white;
         }
-
-        header .logo {
-            max-width: 150px;
-            margin-bottom: 10px;
-        }
-
         h1 {
             font-size: 36px;
             margin: 0;
         }
-
         main {
             margin-top: 20px;
         }
-
         section {
             margin-bottom: 40px;
             background-color: white;
@@ -48,44 +39,16 @@
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-
         .section-title {
             font-size: 28px;
             margin-bottom: 20px;
             color: #4caf50;
         }
-
-        .game-options {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .game-options a {
-            display: block;
-            width: 80%;
-            max-width: 300px;
-            text-align: center;
-            margin: 10px 0;
-            padding: 15px;
-            background-color: #4caf50;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 18px;
-            transition: background-color 0.3s;
-        }
-
-        .game-options a:hover {
-            background-color: #45a049;
-        }
-
         .section-content {
             font-size: 16px;
             line-height: 1.6;
             color: #666;
         }
-
         footer {
             text-align: center;
             padding: 20px 0;
@@ -93,22 +56,122 @@
             color: white;
             margin-top: 20px;
         }
+
+        /* Styles du bandeau de navigation */
+        nav {
+            background-color: #4caf50;
+            padding: 15px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px 15px;
+        }
+
+        nav ul li a:hover {
+            background-color: #45a049;
+            border-radius: 5px;
+        }
+
+        /* Style du menu déroulant */
+        nav ul li ul {
+            display: none;
+            position: absolute;
+            background-color: #4caf50;
+            top: 40px;
+            left: 0;
+            padding: 0;
+            list-style-type: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul li ul li {
+            margin: 0;
+        }
+
+        nav ul li:hover ul {
+            display: block;
+        }
+
+        nav ul li ul li a {
+            padding: 10px 15px;
+            display: block;
+            white-space: nowrap;
+        }
+
+        nav ul li ul li a:hover {
+            background-color: #45a049;
+        }
+
     </style>
 </head>
 <body>
+    <!-- Bandeau de navigation -->
+    <nav>
+        <div class="logo">Creator Games</div>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Accueil</a></li>
+            <li>
+                <a href="#">Création de jeux</a>
+                <ul>
+                    <li><a href="{{ url_for('dobble') }}">Créer un jeu Dobble</a></li>
+                    <li><a href="{{ url_for('memory') }}">Créer un jeu de Memory</a></li>
+                    <!-- Ajoutez d'autres jeux ici -->
+                </ul>
+            </li>
+            <li><a href="#">Commander</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
     <div class="container">
         <header>
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-            <h1>Creator Games</h1>
+            <h1>Bienvenue chez Creator Games</h1>
         </header>
 
         <main>
-            <!-- Section Générateurs -->
+            <!-- Section Présentation -->
             <section>
-                <h2 class="section-title">Créer votre propre jeu</h2>
-                <div class="game-options">
-                    <a href="{{ url_for('dobble') }}">Créer un jeu Dobble</a>
-                    <a href="{{ url_for('memory') }}">Créer un jeu de Memory</a>
+                <h2 class="section-title">Créez vos propres jeux</h2>
+                <div class="section-content">
+                    <p>Chez Creator Games, nous vous permettons de créer vos propres jeux personnalisés. Que vous souhaitiez créer un jeu Dobble, Memory ou tout autre jeu, notre plateforme vous offre la flexibilité et les outils pour donner vie à vos idées.</p>
+                </div>
+            </section>
+
+            <!-- Section Options de jeux -->
+            <section>
+                <h2 class="section-title">Choisissez un jeu à créer</h2>
+                <div class="section-content">
+                    <p>Explorez nos options de création de jeux et commencez à personnaliser votre propre jeu :</p>
+                    <ul>
+                        <li><a href="{{ url_for('dobble') }}">Créer un jeu Dobble</a></li>
+                        <li><a href="{{ url_for('memory') }}">Créer un jeu de Memory</a></li>
+                    </ul>
                 </div>
             </section>
 
@@ -118,15 +181,6 @@
                 <div class="section-content">
                     <p>Vous souhaitez un jeu personnalisé avec un design unique ? Nous proposons des services de création de jeux sur mesure adaptés à vos besoins. Contactez-nous pour discuter de votre projet !</p>
                     <p><a href="mailto:contact@creatorgames.com">Envoyez-nous un e-mail</a> pour plus d'informations.</p>
-                </div>
-            </section>
-
-            <!-- Section Nous connaître -->
-            <section>
-                <h2 class="section-title">Nous connaître</h2>
-                <div class="section-content">
-                    <p>Chez Creator Games, nous sommes passionnés par la création de jeux uniques et innovants. Notre mission est de vous fournir les outils nécessaires pour créer des jeux amusants et mémorables pour toutes les occasions.</p>
-                    <p>Découvrez notre histoire et notre engagement envers la qualité et la créativité.</p>
                 </div>
             </section>
         </main>

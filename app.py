@@ -159,10 +159,14 @@ def create_dobble_pdf(faces):
     return pdf_buffer
 
 # Fonction pour créer un PDF avec les cartes Memory
+from PIL import Image, ImageDraw
+from io import BytesIO
+
 def create_memory_pdf(pairs):
     pdf_buffer = BytesIO()
     c_width, c_height = 2480, 3508  # Taille d'une page A4 en pixels à 300 DPI
     card_size = 400  # Taille des cartes mémoire (400x400 pixels)
+    border_thickness = 10  # Épaisseur du contour
     pages = []
     current_page = Image.new('RGB', (c_width, c_height), (255, 255, 255))  # Créer une page avec un fond blanc
 
@@ -184,7 +188,18 @@ def create_memory_pdf(pairs):
 
         resized_pair = image_with_white_bg.resize((card_size, card_size))
 
+        # Coller l'image sur la page courante
         current_page.paste(resized_pair, pos)
+
+        # Dessiner un carré autour de la carte
+        draw = ImageDraw.Draw(current_page)
+        draw.rectangle(
+            [
+                (pos[0] - border_thickness // 2, pos[1] - border_thickness // 2), 
+                (pos[0] + card_size + border_thickness // 2, pos[1] + card_size + border_thickness // 2)
+            ],
+            outline="black", width=border_thickness
+        )
 
         if (idx + 1) % 20 == 0:  # Après avoir placé 20 images (10 paires), ajouter la page et en créer une nouvelle
             pages.append(current_page)
@@ -201,5 +216,6 @@ def create_memory_pdf(pairs):
     
     pdf_buffer.seek(0)
     return pdf_buffer
+
 if __name__ == '__main__':
     app.run(debug=True)

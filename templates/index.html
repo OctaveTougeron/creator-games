@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creator-Games</title>
+    <title>Accueil - Créateur de Jeux</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
         <header>
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-            <h1>Creator-Games</h1>
+            <h1>Créateur de Jeux</h1>
         </header>
 
         <main>
-            <h2>Bienvenue sur Creator-Games !</h2>
-            <p>Choisissez un générateur de jeu pour commencer :</p>
-            <ul>
-                <li><a href="{{ url_for('dobble') }}">Générateur de Dobble</a></li>
-                <!-- Ajoutez ici d'autres générateurs de jeux à l'avenir -->
-            </ul>
+            <h2>Bienvenue sur Creator Games !</h2>
+            <p>Choisissez le jeu que vous souhaitez créer :</p>
+
+            <div class="game-options">
+                <a href="{{ url_for('dobble') }}" class="btn">Créer un jeu Dobble</a>
+                <a href="{{ url_for('memory') }}" class="btn">Créer un jeu de Memory</a>
+            </div>
         </main>
     </div>
 </body>
